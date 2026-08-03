@@ -1,0 +1,1 @@
+console.log("🏡 Cabin Companion Academy v2.0 is running!");
