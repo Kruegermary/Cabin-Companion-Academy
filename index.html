@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{
+      --cream:#fff8e9;--paper:#fffdf8;--wood:#805332;--bark:#493225;
+      --moss:#78945b;--sage:#deead5;--gold:#efc45c;--rust:#ce7346;
+      --sky:#dceff0;--ink:#302820;--muted:#756b61;--line:#dcc8ad;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;color:var(--ink);
+      background:linear-gradient(180deg,#d9eee4,#fff8e9 65%);min-height:100vh}
+    button,input,textarea,select{font:inherit}button{cursor:pointer}
+    .shell{max-width:1180px;margin:auto;padding:16px}.hidden{display:none!important}
+    .hero{background:linear-gradient(135deg,var(--wood),#9b6a43);color:white;
+      border:4px solid var(--bark);border-radius:26px;padding:22px;text-align:center;
+      box-shadow:0 8px 24px #0002}
+    .hero h1{margin:0;font-size:clamp(30px,6vw,52px)}.hero p{margin:8px 0 0}
+    .panel{background:var(--paper);border:2px solid var(--line);border-radius:22px;
+      padding:18px;margin-top:16px;box-shadow:0 4px 14px #0001}
+    .grid{display:grid;gap:14px}.grid2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .grid3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+    .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .btn,.tab{border:0;border-radius:999px;padding:10px 15px}.btn{background:var(--moss);color:white}
+    .btn.gold{background:var(--gold);color:var(--bark)}.btn.rust{background:var(--rust)}
+    .tab{background:var(--sage)}.tab.active{background:var(--wood);color:white}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .profile{background:white;border:2px solid var(--line);border-radius:18px;padding:16px;text-align:left}
+    input,textarea,select{width:100%;padding:11px;border:1px solid #bbb;border-radius:12px;background:white}
+    textarea{min-height:90px}.small{font-size:13px;color:var(--muted)}.big{font-size:28px;font-weight:bold}
+    .stat,.hub-card,.workbook,.plan-card{background:white;border:2px solid var(--line);border-radius:16px;padding:14px}
+    .hub-card h3,.workbook h3,.plan-card h3{margin-top:0}
+    .mission{border:2px solid var(--line);border-radius:18px;background:white;overflow:hidden}
+    .mission h3{margin:0;padding:10px 14px;background:var(--sage)}.tasks{padding:10px 14px}
+    .task{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #ddd}
+    .task input{width:20px;height:20px}.note{background:#fff5c9;border-left:5px solid var(--gold);padding:10px;border-radius:10px}
+    .badge{display:inline-block;background:var(--sage);padding:8px 10px;border-radius:999px;margin:4px}
+    .reward{display:flex;justify-content:space-between;gap:10px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:12px;background:white}
+    .msg{padding:10px;border-radius:10px;margin-top:10px}.ok{background:#e4f4df;color:#295b2a}.err{background:#ffe2e2;color:#812323}
+    .child-admin{background:var(--paper);border:2px solid var(--line);border-radius:22px;margin-top:16px;overflow:hidden}
+    .child-summary{width:100%;border:0;background:linear-gradient(90deg,var(--sage),#f7f0df);
+      padding:16px 18px;display:flex;justify-content:space-between;align-items:center;text-align:left}
+    .child-summary strong{font-size:22px}.child-body{padding:18px}.section-title{margin:24px 0 10px}
+    .workbook-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-top:10px}
+    .plan-link{display:inline-block;margin-top:8px;text-decoration:none}
+    .assignment-row{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+    .assignment-row input[type="checkbox"]{width:24px;height:24px;margin-top:3px}
+    .earned{background:#e4f4df;border-color:#9bc58e}
+    .points-chip{display:inline-block;background:var(--gold);color:var(--bark);
+      border-radius:999px;padding:5px 9px;font-weight:bold;margin-top:8px}
+    .status-chip{display:inline-block;border-radius:999px;padding:5px 9px;
+      margin-top:8px;font-weight:bold;background:var(--sage)}
+    .status-submitted{background:#fff2c9}
+    .status-approved{background:#e4f4df}
+    .status-corrections{background:#ffe2e2}
+    .review-item{border:2px solid var(--line);border-radius:18px;padding:16px;background:white}
+    .review-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .review-empty{padding:14px;background:var(--sage);border-radius:14px}
+
+    .planner-toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+    @media(max-width:700px){.planner-toolbar{grid-template-columns:1fr}}
+    .footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+    @media(max-width:650px){.child-summary strong{font-size:18px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+<header class="hero"><h1>🏡 Cabin Companion Academy</h1><p>Faith • Family • Learning • Adventure</p></header>
+
+<section id="loginView" class="panel">
+  <h2>Enter the Cabin</h2>
+  <div class="grid grid2">
+    <div><label>Family code</label><input id="familyCode" placeholder="CABIN-FAMILY"></div>
+    <div><label>Doorway</label><select id="role"><option value="student">Student</option></select></div>
+    <div id="pinWrap" class="hidden"><label>Parent PIN</label><input id="parentPin" type="password"></div>
+  </div>
+  <button id="loginBtn" class="btn" style="margin-top:12px">Enter</button><div id="loginMsg"></div>
+</section>
+
+<section id="profileView" class="panel hidden">
+  <div class="topbar"><h2>Choose Your Explorer</h2><button id="backLogin" class="btn gold">Back</button></div>
+  <div id="profiles" class="grid grid2"></div>
+</section>
+
+<main id="studentView" class="hidden">
+  <section class="panel topbar">
+    <div><h2 id="studentTitle" style="margin:0"></h2><div id="studentDate" class="small"></div></div>
+    <button id="switchStudent" class="btn gold">Switch Explorer</button>
+  </section>
+  <section class="panel"><div class="grid grid3">
+    <div class="stat"><div id="pointStatLabel" class="small">Points</div><div id="coinCount" class="big">0</div></div>
+    <div class="stat"><div class="small">Today's Progress</div><div id="todayPercent" class="big">0%</div></div>
+    <div class="stat"><div class="small">Badges</div><div id="badgeCount" class="big">0</div></div>
+  </div></section>
+
+  <section class="panel"><h2>📅 Today’s Personal Plan</h2><div id="studentDailyPlan" class="grid grid2"></div></section>
+  <section class="panel"><h2>📚 My Workbooks</h2><div id="studentWorkbooks" class="grid grid3"></div></section>
+
+  <section class="panel">
+    <h2>🌞 Today at the Cabin</h2>
+    <div class="grid grid3">
+      <div class="hub-card"><h3>📖 Bible Verse</h3><div id="hubVerse"></div></div>
+      <div class="hub-card"><h3>☀️ Weather Watch</h3><div id="hubWeather"></div></div>
+      <div class="hub-card"><h3>📣 Family Message</h3><div id="hubAnnouncement"></div></div>
+      <div class="hub-card"><h3>📚 Read-Aloud</h3><div id="hubReadAloud"></div></div>
+      <div class="hub-card"><h3>❤️ Memory Verse</h3><div id="hubMemory"></div></div>
+      <div class="hub-card"><h3>🌲 Nature Challenge</h3><div id="hubNature"></div></div>
+      <div class="hub-card"><h3>🤝 Family Goal</h3><div id="hubGoal"></div></div>
+    </div>
+  </section>
+
+  <section class="panel"><div id="dayTabs" class="tabs"></div></section>
+  <section id="missions" class="grid grid2"></section>
+
+  <section class="panel"><h2>⭐ Campfire Reflection</h2><p id="reflectionPrompt"></p>
+    <textarea id="reflectionText" placeholder="Write your reflection..."></textarea>
+    <button id="saveReflection" class="btn" style="margin-top:8px">Save Reflection</button><div id="reflectionMsg"></div>
+  </section>
+
+  <section class="panel"><h2>🏅 My Badges</h2><div id="badges"></div></section>
+  <section class="panel"><h2>🎁 Cabin Reward Store</h2><div id="rewardStore" class="grid grid2"></div><h3>My Requests</h3><div id="redemptions"></div></section>
+  <section class="panel"><h2>💌 Notes from Home</h2><div id="studentNotes"></div></section>
+</main>
+
+<main id="parentView" class="hidden">
+  <section class="panel topbar"><h2 style="margin:0">Parent Dashboard</h2><button id="parentLogout" class="btn gold">Log Out</button></section>
+
+  <section class="panel">
+    <h3>Today’s Cabin Hub</h3>
+    <div class="grid grid2">
+      <input id="pVerse" placeholder="Bible verse"><input id="pWeather" placeholder="Weather">
+      <input id="pAnnouncement" placeholder="Family announcement"><input id="pReadAloud" placeholder="Current read-aloud">
+      <input id="pMemory" placeholder="Memory verse"><input id="pNature" placeholder="Nature challenge">
+      <input id="pGoal" placeholder="Family goal">
+    </div>
+    <button id="saveHubBtn" class="btn" style="margin-top:10px">Save Today’s Hub</button><div id="hubMsg"></div>
+  </section>
+
+
+  <section class="panel">
+    <h3>⭐ Point System</h3>
+    <div class="planner-toolbar">
+      <div>
+        <label>What should rewards be called?</label>
+        <input id="pointDisplayName" placeholder="Points, Tokens, Cabin Coins...">
+      </div>
+      <div class="small">Examples: Points, Tokens, Stars, Cabin Coins</div>
+      <button id="savePointSettingsBtn" class="btn">Save Name</button>
+    </div>
+    <div id="pointSettingsMsg"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Add Child</h3>
+    <div class="grid grid2"><input id="newChildName" placeholder="Child's first name or nickname">
+      <select id="newChildAvatar"><option>🦫</option><option>🐓</option><option>🪿</option><option>🐢</option><option>🌲</option></select></div>
+    <button id="addChildBtn" class="btn" style="margin-top:10px">Add Child</button><div id="addChildMsg"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Add Reward Store Item</h3>
+    <div class="grid grid2"><input id="newRewardTitle" placeholder="Reward"><input id="newRewardCost" type="number" min="1" placeholder="Coin cost"></div>
+    <button id="addRewardBtn" class="btn" style="margin-top:10px">Add Reward</button><div id="rewardMsg"></div>
+  </section>
+
+
+  <section class="panel">
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">📋 Waiting for Review</h2>
+        <div class="small">Open the workbook or resource, review the work, then approve it or return it for corrections.</div>
+      </div>
+      <button id="refreshReviewsBtn" class="btn gold">Refresh Queue</button>
+    </div>
+    <div id="reviewQueue" class="grid grid2" style="margin-top:14px"></div>
+  </section>
+
+  <section id="dashboardCards"></section>
+</main>
+
+<footer class="footer">Cabin Companion Academy • Family Link-safe Student Edition</footer>
+</div>
+
+
+<script>
+window.CCA_API_URL = "https://script.google.com/macros/s/AKfycbzQQEz4xZRcjW3uuPCa_mPrKxKwfboZupYv0jKB0lLc56YVhy7OygpDlWu8Ps5NAhlJ/exec";
+
+(function installAppsScriptBridge(){
+  let counter = 0;
+
+  function callApi(action, payload, success, failure){
+    if (!window.CCA_API_URL || window.CCA_API_URL.includes("PASTE_YOUR")) {
+      failure(new Error("Mom needs to connect the website in index.html first."));
+      return;
+    }
+
+    const callback = "ccaJsonp_" + Date.now() + "_" + counter++;
+    const script = document.createElement("script");
+    const timer = setTimeout(function(){
+      cleanup();
+      failure(new Error("The cabin took too long to answer. Please try again."));
+    }, 20000);
+
+    function cleanup(){
+      clearTimeout(timer);
+      try { delete window[callback]; } catch(e) { window[callback] = undefined; }
+      script.remove();
+    }
+
+    window[callback] = function(result){
+      cleanup();
+      if (result && result.ok) success(result.data);
+      else failure(new Error((result && result.error) || "Something went wrong."));
+    };
+
+    const query = new URLSearchParams({
+      api:"1",
+      action:action,
+      callback:callback,
+      payload:JSON.stringify(payload || {})
+    });
+
+    script.onerror = function(){
+      cleanup();
+      failure(new Error("Cabin Companion could not reach the family data service."));
+    };
+    script.src = window.CCA_API_URL + "?" + query.toString();
+    document.body.appendChild(script);
+  }
+
+  function makeRunner(){
+    const state = {
+      success:function(){},
+      failure:function(error){ console.error(error); }
+    };
+
+    let proxy;
+    proxy = new Proxy({}, {
+      get:function(target, property){
+        if (property === "withSuccessHandler") {
+          return function(handler){ state.success = handler || function(){}; return proxy; };
+        }
+        if (property === "withFailureHandler") {
+          return function(handler){ state.failure = handler || function(){}; return proxy; };
+        }
+        return function(payload){
+          callApi(String(property), payload || {}, state.success, state.failure);
+        };
+      }
+    });
+    return proxy;
+  }
+
+  window.google = window.google || {};
+  Object.defineProperty(window.google, "script", {
+    value:{ get run(){ return makeRunner(); } },
+    configurable:true
+  });
+})();
+</script>
+
+<script>
+const DAYS={
+monday:{label:"🌿 Monday",reflection:"What was your favorite adventure today?",sections:{
+"🐢 Morning by the Fire":["Prayer","Bible Story","Memory Verse","Calendar","Weather Watch","Family Read-Aloud"],
+"🦫 Bea’s Reading Nook":["Reading Lesson","Language Arts","Handwriting","Tell Mom your favorite part"],
+"🐓 Nigel’s Workshop":["Math Lesson","Logic Puzzle","Math Game"],
+"🪿 Gus’s Explorer Trail":["Science or History","Nature Observation","Ask one BIG question"],
+"🐢 Morty’s Hearth":["Character Challenge","Life Skill Practice","Help someone without being asked"]}},
+tuesday:{label:"🧩 Tuesday",reflection:"What problem did you solve today?",sections:{
+"🐢 Morning by the Fire":["Prayer","Bible","Memory Verse","Calendar","Weather","Read-Aloud"],
+"🦫 Bea’s Reading Nook":["Reading","Writing","Vocabulary Challenge"],
+"🐓 Nigel’s Workshop":["Math","Brain Teaser","Logic Challenge"],
+"🪿 Gus’s Explorer Trail":["Science Investigation","Observe Something New","Record Your Discovery"],
+"🐢 Morty’s Hearth":["Situational Awareness Mission","Kindness Challenge"]}},
+wednesday:{label:"🌎 Wednesday",reflection:"What amazed you today?",sections:{
+"🐢 Morning by the Fire":["Prayer","Bible","Calendar","Weather","Read-Aloud"],
+"🦫 Bea’s Reading Nook":["Reading","Language Arts","Creative Writing"],
+"🐓 Nigel’s Workshop":["Math Lesson","Building Challenge"],
+"🪿 Gus’s Explorer Trail":["Science","Nature Walk","Geography","Draw what you discover"],
+"🐢 Morty’s Hearth":["Organization","Responsibility"]}},
+thursday:{label:"❤️ Thursday",reflection:"Who did you help today?",sections:{
+"🐢 Morning by the Fire":["Prayer","Bible","Gratitude Journal","Calendar","Read-Aloud"],
+"🦫 Bea’s Reading Nook":["Reading","Writing","Poetry"],
+"🐓 Nigel’s Workshop":["Math","Money Skills","Puzzle"],
+"🪿 Gus’s Explorer Trail":["History","Nature","Family Project"],
+"🐢 Morty’s Hearth":["Service Project","Cooking","Helping Around the House"]}},
+friday:{label:"🎉 Friday",reflection:"What are you most proud of this week?",sections:{
+"🐢 Morning by the Fire":["Prayer","Bible","Review the Week","Read-Aloud"],
+"🦫 Bea’s Reading Nook":["Library Time","Reading Challenge","Storytelling"],
+"🐓 Nigel’s Workshop":["Math Games","STEM Challenge","Building Competition"],
+"🪿 Gus’s Explorer Trail":["Field Trip","Nature Hike","Art Project","Science Experiment"],
+"🐢 Morty’s Hearth":["Family Cooking","Cleaning Challenge","Reward Store"]}}
+};
+
+const SUBJECTS={
+  math:{title:"➗ Math",defaultLabel:"Math Workbook"},
+  science:{title:"🔬 Science",defaultLabel:"Science Workbook"},
+  socialStudies:{title:"🌎 Social Studies",defaultLabel:"Social Studies Workbook"}
+};
+
+const PLAN_FIELDS=[
+  ["languageArts","languageArtsUrl","✏️ Language Arts"],
+  ["math","mathUrl","➗ Math"],
+  ["science","scienceUrl","🔬 Science"],
+  ["socialStudies","socialStudiesUrl","🌎 Social Studies"],
+  ["fieldTrip","fieldTripUrl","🚌 Field Trip / Outing"],
+  ["extraLearning","extraLearningUrl","🌟 Extra Learning"],
+  ["lifeSkill","lifeSkillUrl","🧺 Life Skill / Chore"]
+];
+
+let state={familyCode:"",role:"",pin:"",profiles:[],currentProfile:null,currentData:null,currentDay:"monday",pointName:"Points"};
+const $=id=>document.getElementById(id);
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+const show=id=>$(id).classList.remove("hidden"),hide=id=>$(id).classList.add("hidden");
+function msg(el,text,type="ok"){el.innerHTML=`<div class="msg ${type}">${text}</div>`}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+$("role").onchange=()=>$("pinWrap").classList.toggle("hidden",$("role").value!=="parent");
+$("loginBtn").onclick=()=>{
+ state.familyCode=$("familyCode").value.trim();state.role=$("role").value;state.pin=$("parentPin").value;
+ google.script.run.withSuccessHandler(res=>{state.profiles=res.profiles||[];state.pointName=(res.pointSettings&&res.pointSettings.displayName)||"Points";hide("loginView");state.role==="parent"?openParent():openProfiles()})
+ .withFailureHandler(e=>msg($("loginMsg"),e.message,"err")).login({familyCode:state.familyCode,role:state.role,pin:state.pin});
+};
+$("backLogin").onclick=reset;$("switchStudent").onclick=openProfiles;$("parentLogout").onclick=reset;
+function reset(){hide("profileView");hide("studentView");hide("parentView");show("loginView")}
+function openProfiles(){hide("studentView");hide("parentView");show("profileView");$("profiles").innerHTML="";const kids=state.profiles.filter(p=>p.role==="student");if(!kids.length){$("profiles").innerHTML='<div class="note">A parent needs to add student profiles first.</div>';return}kids.forEach(p=>{const b=document.createElement("button");b.className="profile";b.innerHTML=`<div class="big">${p.avatar} ${esc(p.name)}</div><div class="small">Open today’s adventure</div>`;b.onclick=()=>loadStudent(p);$("profiles").appendChild(b)})}
+function loadStudent(p){google.script.run.withSuccessHandler(data=>{state.currentProfile=p;state.currentData=data;hide("profileView");show("studentView");$("studentTitle").textContent=`${p.avatar} Welcome, ${p.name}!`;$("studentDate").textContent=new Date().toLocaleDateString();renderStudent()}).withFailureHandler(e=>alert(e.message)).getStudentData({familyCode:state.familyCode,profileId:p.profileId})}
+
+function renderStudent(){state.pointName=(state.currentData.pointSettings&&state.currentData.pointSettings.displayName)||state.pointName||"Points";$("pointStatLabel").textContent=state.pointName;$("coinCount").textContent=state.currentData.coins||0;$("badgeCount").textContent=(state.currentData.badges||[]).length;renderDailyPlan();renderWorkbooks();renderHub();renderTabs();renderMissions();renderReflection();renderBadges();renderStore();renderNotes()}
+function renderDailyPlan(){
+ const p=state.currentData.dailyPlan||{},box=$("studentDailyPlan");
+ const reviews=state.currentData.taskReviews||[];
+ box.innerHTML="";
+ let any=false;
+
+ PLAN_FIELDS.forEach(([field,urlField,title])=>{
+   const text=p[field]||"",url=p[urlField]||"";
+   const points=Number(p[field+"Points"]||0);
+   if(!text&&!url)return;
+
+   any=true;
+   const review=reviews.find(item=>String(item.taskKey)===field)||{};
+   const status=String(review.status||"");
+   const card=document.createElement("section");
+   card.className="plan-card"+(status==="approved"?" earned":"");
+
+   let statusText="";
+   let statusClass="";
+   if(status==="submitted"){
+     statusText="Waiting for Mom’s review";
+     statusClass="status-submitted";
+   }else if(status==="approved"){
+     statusText="Approved";
+     statusClass="status-approved";
+   }else if(status==="corrections"){
+     statusText="Needs corrections";
+     statusClass="status-corrections";
+   }
+
+   card.innerHTML=`
+     <h3>${title}</h3>
+     <div>${esc(text||"Open resource")}</div>
+     ${points?`<span class="points-chip">${points} ${esc(state.pointName)} after approval</span>`:""}
+     ${url?`<br><a class="btn plan-link" href="${esc(url)}" target="_blank" rel="noopener">Open Resource</a>`:""}
+     ${statusText?`<br><span class="status-chip ${statusClass}">${statusText}</span>`:""}
+     ${review.parentFeedback?`<div class="note" style="margin-top:10px"><strong>Mom’s feedback:</strong><br>${esc(review.parentFeedback)}</div>`:""}
+     <label class="small" style="display:block;margin-top:10px">Optional note for Mom</label>
+     <textarea class="studentTaskNote" placeholder="Example: I finished pages 12–14.">${esc(review.studentNote||"")}</textarea>
+     <button class="btn submitTask" style="margin-top:8px" ${status==="approved"||status==="submitted"?"disabled":""}>
+       ${status==="corrections"?"Resubmit for Review":"Submit for Review"}
+     </button>
+     <div class="taskReviewMsg"></div>
+   `;
+
+   card.querySelector(".submitTask").onclick=()=>{
+     const button=card.querySelector(".submitTask");
+     button.disabled=true;
+
+     google.script.run.withSuccessHandler(()=>{
+       msg(card.querySelector(".taskReviewMsg"),"Submitted to Mom!");
+       button.textContent="Waiting for Review";
+     }).withFailureHandler(e=>{
+       button.disabled=false;
+       msg(card.querySelector(".taskReviewMsg"),e.message,"err");
+     }).submitPlanTask({
+       familyCode:state.familyCode,
+       profileId:state.currentProfile.profileId,
+       date:today(),
+       taskKey:field,
+       taskTitle:title,
+       assignmentText:text,
+       resourceUrl:url,
+       points:points,
+       studentNote:card.querySelector(".studentTaskNote").value
+     });
+   };
+
+   box.appendChild(card);
+ });
+
+ if(p.parentNotes){
+   any=true;
+   const card=document.createElement("section");
+   card.className="plan-card";
+   card.innerHTML=`<h3>📝 Mom’s Notes</h3><div>${esc(p.parentNotes)}</div>`;
+   box.appendChild(card);
+ }
+
+ if(!any){
+   box.innerHTML='<div class="note">Mom has not added a personal plan for today yet.</div>';
+ }
+}
+function renderWorkbooks(){const box=$("studentWorkbooks");box.innerHTML="";Object.entries(SUBJECTS).forEach(([subject,info])=>{const wb=(state.currentData.workbooks||[]).find(w=>String(w.subject)===subject);const card=document.createElement("section");card.className="workbook";if(!wb||!wb.url){card.innerHTML=`<h3>${info.title}</h3><div class="small">Workbook link not added yet.</div>`}else{card.innerHTML=`<h3>${info.title}</h3><strong>${esc(wb.label||info.defaultLabel)}</strong><p class="small">Continue on page: ${esc(wb.currentPage||"not set")}</p><a class="btn" href="${esc(wb.url)}" target="_blank" rel="noopener">Open Workbook</a><div class="workbook-row"><input class="pageInput" value="${esc(wb.currentPage||"")}" placeholder="Page"><button class="btn gold savePage">Save</button></div><div class="pageMsg"></div>`;card.querySelector(".savePage").onclick=()=>{const value=card.querySelector(".pageInput").value;google.script.run.withSuccessHandler(()=>msg(card.querySelector(".pageMsg"),"Page saved!")).withFailureHandler(e=>msg(card.querySelector(".pageMsg"),e.message,"err")).updateWorkbookPage({familyCode:state.familyCode,profileId:state.currentProfile.profileId,subject,currentPage:value})}}box.appendChild(card)})}
+function renderHub(){const h=state.currentData.hub||{};const put=(id,v,f)=>$(id).textContent=v||f;put("hubVerse",h.bibleVerse,"No verse added.");put("hubWeather",h.weather,"Check the weather.");put("hubAnnouncement",h.announcement,"Welcome!");put("hubReadAloud",h.readAloud,"No read-aloud added.");put("hubMemory",h.memoryVerse,"Practice your verse.");put("hubNature",h.natureChallenge,"Look for something interesting outdoors.");put("hubGoal",h.familyGoal,"Encourage one another.")}
+function renderTabs(){$("dayTabs").innerHTML="";Object.entries(DAYS).forEach(([k,d])=>{const b=document.createElement("button");b.className="tab"+(k===state.currentDay?" active":"");b.textContent=d.label;b.onclick=()=>{state.currentDay=k;renderTabs();renderMissions();renderReflection()};$("dayTabs").appendChild(b)})}
+function taskId(s,t){return `${state.currentDay}::${s}::${t}`}
+function isDone(id){return state.currentData.progress.some(p=>p.date===today()&&p.dayKey===state.currentDay&&p.taskId===id&&p.completed)}
+function renderMissions(){$("missions").innerHTML="";let total=0,done=0;Object.entries(DAYS[state.currentDay].sections).forEach(([section,tasks])=>{const card=document.createElement("section");card.className="mission";card.innerHTML=`<h3>${section}</h3>`;const box=document.createElement("div");box.className="tasks";tasks.forEach(task=>{total++;const id=taskId(section,task),checked=isDone(id);if(checked)done++;const row=document.createElement("label");row.className="task";const cb=document.createElement("input");cb.type="checkbox";cb.checked=checked;const span=document.createElement("span");span.textContent=task;cb.onchange=()=>google.script.run.withSuccessHandler(()=>{const x=state.currentData.progress.find(p=>p.date===today()&&p.dayKey===state.currentDay&&p.taskId===id);x?x.completed=cb.checked:state.currentData.progress.push({date:today(),dayKey:state.currentDay,taskId:id,completed:cb.checked});renderMissions()}).withFailureHandler(e=>{cb.checked=!cb.checked;alert(e.message)}).saveTask({familyCode:state.familyCode,profileId:state.currentProfile.profileId,date:today(),dayKey:state.currentDay,taskId:id,completed:cb.checked});row.append(cb,span);box.appendChild(row)});card.appendChild(box);$("missions").appendChild(card)});$("todayPercent").textContent=total?Math.round(done/total*100)+"%":"0%"}
+function renderReflection(){const r=state.currentData.reflections.find(x=>x.date===today()&&x.dayKey===state.currentDay);$("reflectionPrompt").textContent=DAYS[state.currentDay].reflection;$("reflectionText").value=r?r.response:"";$("reflectionMsg").innerHTML=""}
+$("saveReflection").onclick=()=>google.script.run.withSuccessHandler(()=>msg($("reflectionMsg"),"Reflection saved!")).withFailureHandler(e=>msg($("reflectionMsg"),e.message,"err")).saveReflection({familyCode:state.familyCode,profileId:state.currentProfile.profileId,date:today(),dayKey:state.currentDay,prompt:DAYS[state.currentDay].reflection,response:$("reflectionText").value});
+function renderBadges(){$("badges").innerHTML=(state.currentData.badges||[]).length?state.currentData.badges.map(b=>`<span class="badge">🏅 ${esc(b)}</span>`).join(""):'<div class="small">No badges yet.</div>'}
+function renderStore(){$("rewardStore").innerHTML="";(state.currentData.store||[]).forEach(item=>{const row=document.createElement("div");row.className="reward";row.innerHTML=`<div><strong>${esc(item.title)}</strong><div class="small">${item.cost} ${esc(state.pointName)}</div></div>`;const b=document.createElement("button");b.className="btn gold";b.textContent="Request";b.onclick=()=>google.script.run.withSuccessHandler(res=>{$("coinCount").textContent=res.coins;msg($("redemptions"),"Reward requested!")}).withFailureHandler(e=>alert(e.message)).redeemReward({familyCode:state.familyCode,profileId:state.currentProfile.profileId,rewardId:item.rewardId,date:today()});row.appendChild(b);$("rewardStore").appendChild(row)});$("redemptions").innerHTML=(state.currentData.redemptions||[]).length?state.currentData.redemptions.slice().reverse().map(r=>`<div class="note">${esc(r.rewardTitle)} — ${esc(r.status)}</div>`).join("<br>"):'<div class="small">No reward requests yet.</div>'}
+function renderNotes(){$("studentNotes").innerHTML=(state.currentData.notes||[]).length?state.currentData.notes.slice().reverse().map(n=>`<div class="note"><strong>${esc(n.date)}</strong><br>${esc(n.note)}</div>`).join("<br>"):'<div class="small">No notes yet.</div>'}
+
+
+$("savePointSettingsBtn").onclick=()=>{
+ const displayName=$("pointDisplayName").value.trim()||"Points";
+ google.script.run.withSuccessHandler(res=>{
+   state.pointName=res.displayName;
+   msg($("pointSettingsMsg"),`Reward name saved as "${res.displayName}".`);
+   refreshDashboard();
+ }).withFailureHandler(e=>msg($("pointSettingsMsg"),e.message,"err"))
+ .savePointSettings({
+   familyCode:state.familyCode,
+   pin:state.pin,
+   displayName:displayName
+ });
+};
+
+
+$("refreshReviewsBtn").onclick=loadReviewQueue;
+
+function loadReviewQueue(){
+ const box=$("reviewQueue");
+ box.innerHTML='<div class="small">Loading submissions...</div>';
+
+ google.script.run.withSuccessHandler(items=>{
+   box.innerHTML="";
+
+   if(!items.length){
+     box.innerHTML='<div class="review-empty">Nothing is waiting for review right now. 🎉</div>';
+     return;
+   }
+
+   items.forEach(item=>{
+     const card=document.createElement("section");
+     card.className="review-item";
+
+     card.innerHTML=`
+       <h3>${esc(item.avatar)} ${esc(item.studentName)}</h3>
+       <strong>${esc(item.taskTitle||item.taskKey)}</strong>
+       <p>${esc(item.assignmentText||"")}</p>
+       <span class="points-chip">${esc(item.points||0)} ${esc(state.pointName)}</span>
+       ${item.studentNote?`<div class="note" style="margin-top:10px"><strong>Student note:</strong><br>${esc(item.studentNote)}</div>`:""}
+       ${item.resourceUrl?`<br><a class="btn plan-link" href="${esc(item.resourceUrl)}" target="_blank" rel="noopener">Open Workbook / Resource</a>`:""}
+       <label class="small" style="display:block;margin-top:12px">Feedback for the student</label>
+       <textarea class="reviewFeedback" placeholder="Great job! Or explain what needs fixing."></textarea>
+       <div class="review-actions">
+         <button class="btn approveReview">Approve & Award</button>
+         <button class="btn rust correctionsReview">Needs Corrections</button>
+       </div>
+       <div class="reviewMsg"></div>
+     `;
+
+     card.querySelector(".approveReview").onclick=()=>{
+       reviewOneTask(card,item,"approve");
+     };
+
+     card.querySelector(".correctionsReview").onclick=()=>{
+       reviewOneTask(card,item,"corrections");
+     };
+
+     box.appendChild(card);
+   });
+ }).withFailureHandler(e=>{
+   box.innerHTML=`<div class="msg err">${esc(e.message)}</div>`;
+ }).getReviewQueue({
+   familyCode:state.familyCode,
+   pin:state.pin
+ });
+}
+
+function reviewOneTask(card,item,action){
+ const feedback=card.querySelector(".reviewFeedback").value;
+
+ google.script.run.withSuccessHandler(res=>{
+   msg(
+     card.querySelector(".reviewMsg"),
+     action==="approve"
+       ?`Approved! Total is now ${res.total} ${state.pointName}.`
+       :"Returned for corrections."
+   );
+   setTimeout(loadReviewQueue,500);
+   refreshDashboard();
+ }).withFailureHandler(e=>{
+   msg(card.querySelector(".reviewMsg"),e.message,"err");
+ }).reviewPlanTask({
+   familyCode:state.familyCode,
+   pin:state.pin,
+   profileId:item.profileId,
+   date:item.date,
+   taskKey:item.taskKey,
+   action:action,
+   feedback:feedback
+ });
+}
+
+function openParent(){hide("studentView");hide("profileView");show("parentView");$("pointDisplayName").value=state.pointName||"Points";refreshDashboard();loadReviewQueue()}
+$("saveHubBtn").onclick=()=>google.script.run.withSuccessHandler(()=>{msg($("hubMsg"),"Today’s Cabin Hub saved!");refreshDashboard()}).withFailureHandler(e=>msg($("hubMsg"),e.message,"err")).saveDailyHub({familyCode:state.familyCode,pin:state.pin,date:today(),bibleVerse:$("pVerse").value,weather:$("pWeather").value,announcement:$("pAnnouncement").value,readAloud:$("pReadAloud").value,memoryVerse:$("pMemory").value,natureChallenge:$("pNature").value,familyGoal:$("pGoal").value});
+$("addChildBtn").onclick=()=>google.script.run.withSuccessHandler(res=>{state.profiles.push(res.profile);msg($("addChildMsg"),"Child added!");refreshDashboard()}).withFailureHandler(e=>msg($("addChildMsg"),e.message,"err")).addProfile({familyCode:state.familyCode,pin:state.pin,name:$("newChildName").value,avatar:$("newChildAvatar").value});
+$("addRewardBtn").onclick=()=>google.script.run.withSuccessHandler(()=>{msg($("rewardMsg"),"Reward added!");refreshDashboard()}).withFailureHandler(e=>msg($("rewardMsg"),e.message,"err")).addRewardItem({familyCode:state.familyCode,pin:state.pin,title:$("newRewardTitle").value,cost:$("newRewardCost").value});
+function refreshDashboard(){google.script.run.withSuccessHandler(list=>{const wrap=$("dashboardCards");wrap.innerHTML="";if(!list.length){wrap.innerHTML='<section class="panel">Add your first child above.</section>';return}list.forEach(d=>wrap.appendChild(parentCard(d)));if(list[0])fillHub(list[0].hub||{})}).withFailureHandler(e=>alert(e.message)).getParentDashboard({familyCode:state.familyCode,pin:state.pin})}
+function fillHub(h){$("pVerse").value=h.bibleVerse||"";$("pWeather").value=h.weather||"";$("pAnnouncement").value=h.announcement||"";$("pReadAloud").value=h.readAloud||"";$("pMemory").value=h.memoryVerse||"";$("pNature").value=h.natureChallenge||"";$("pGoal").value=h.familyGoal||""}
+
+function parentCard(d){
+ const wrap=document.createElement("section");wrap.className="child-admin";
+ const header=document.createElement("button");header.className="child-summary";
+ header.innerHTML=`<strong>${d.profile.avatar} ${esc(d.profile.name)}</strong><span>Open ▾</span>`;
+ const body=document.createElement("div");body.className="child-body hidden";
+ const latest=d.reflections.slice().reverse()[0];
+ const todayDone=d.progress.filter(p=>p.date===today()&&p.completed).length;
+ const plan=d.dailyPlan||{};
+
+ body.innerHTML=`
+ <div class="grid grid3">
+   <div class="stat"><div class="small">Completed today</div><div class="big">${todayDone}</div></div>
+   <div class="stat"><div class="small">${esc(state.pointName)}</div><div class="big">${d.coins}</div></div>
+   <div class="stat"><div class="small">Badges</div><div class="big">${d.badges.length}</div></div>
+ </div>
+
+ <h3 class="section-title">📅 Today’s Personal Plan</h3>
+ <div class="grid grid2">
+ ${PLAN_FIELDS.map(([field,urlField,title])=>`<div class="plan-card" data-field="${field}" data-url-field="${urlField}"><h3>${title}</h3><textarea class="planText" placeholder="What should ${esc(d.profile.name)} do today?">${esc(plan[field]||"")}</textarea><input class="planUrl" value="${esc(plan[urlField]||"")}" placeholder="Optional resource link"><label class="small">Reward amount (${esc(state.pointName)})</label><input class="planPoints" type="number" min="0" value="${esc(plan[field+"Points"]||"")}" placeholder="Example: 350"></div>`).join("")}
+ <div class="plan-card"><h3>📝 Parent Notes</h3><textarea class="parentPlanNotes" placeholder="Anything else for today">${esc(plan.parentNotes||"")}</textarea></div>
+ </div>
+ <button class="btn saveDailyPlan" style="margin-top:10px">Save Today’s Personal Plan</button><div class="dailyPlanMsg"></div>
+
+ <h3 class="section-title">📚 Workbook Links</h3>
+ <div class="grid grid3">
+ ${Object.entries(SUBJECTS).map(([subject,info])=>{const wb=(d.workbooks||[]).find(w=>String(w.subject)===subject)||{};return `<div class="workbook" data-subject="${subject}"><h3>${info.title}</h3><label class="small">Button label</label><input class="wbLabel" value="${esc(wb.label||info.defaultLabel)}"><label class="small">Kami or Drive link</label><input class="wbUrl" value="${esc(wb.url||"")}" placeholder="Paste workbook link"><label class="small">Current page</label><input class="wbPage" value="${esc(wb.currentPage||"")}" placeholder="Optional"><button class="btn saveWorkbook" style="margin-top:8px">Save Workbook</button><div class="wbMsg"></div></div>`}).join("")}
+ </div>
+
+ <h3 class="section-title">⭐ Progress & Rewards</h3>
+ <div class="note">${latest?`<strong>${esc(latest.prompt)}</strong><br>${esc(latest.response||"(No response)")}`:"No reflection yet."}</div>
+ <div class="tabs" style="margin-top:12px"><button class="btn coin" data-d="1">+1</button><button class="btn coin" data-d="5">+5</button><button class="btn gold coin" data-d="-1">-1</button></div>
+ <input class="badgeInput" placeholder="Badge name" style="margin-top:12px"><button class="btn badgeBtn" style="margin-top:8px">Award Badge</button>
+ <textarea class="noteInput" placeholder="Leave a note" style="margin-top:12px"></textarea><button class="btn noteBtn" style="margin-top:8px">Save Note</button>
+ <div class="cardMsg"></div>`;
+
+ header.onclick=()=>{body.classList.toggle("hidden");header.querySelector("span").textContent=body.classList.contains("hidden")?"Open ▾":"Close ▴"};
+
+ body.querySelector(".saveDailyPlan").onclick=()=>{
+   const payload={familyCode:state.familyCode,pin:state.pin,profileId:d.profile.profileId,date:today(),parentNotes:body.querySelector(".parentPlanNotes").value};
+   body.querySelectorAll(".plan-card[data-field]").forEach(block=>{payload[block.dataset.field]=block.querySelector(".planText").value;payload[block.dataset.urlField]=block.querySelector(".planUrl").value;payload[block.dataset.field+"Points"]=block.querySelector(".planPoints").value});
+   google.script.run.withSuccessHandler(()=>msg(body.querySelector(".dailyPlanMsg"),"Personal plan saved!")).withFailureHandler(e=>msg(body.querySelector(".dailyPlanMsg"),e.message,"err")).saveDailyPlan(payload);
+ };
+
+ body.querySelectorAll(".saveWorkbook").forEach(button=>{button.onclick=()=>{const block=button.closest(".workbook");google.script.run.withSuccessHandler(()=>msg(block.querySelector(".wbMsg"),"Workbook saved!")).withFailureHandler(e=>msg(block.querySelector(".wbMsg"),e.message,"err")).saveWorkbook({familyCode:state.familyCode,pin:state.pin,profileId:d.profile.profileId,subject:block.dataset.subject,label:block.querySelector(".wbLabel").value,url:block.querySelector(".wbUrl").value,currentPage:block.querySelector(".wbPage").value})}});
+
+ body.querySelectorAll(".coin").forEach(b=>b.onclick=()=>google.script.run.withSuccessHandler(refreshDashboard).withFailureHandler(e=>alert(e.message)).awardCoins({familyCode:state.familyCode,pin:state.pin,profileId:d.profile.profileId,delta:Number(b.dataset.d)}));
+ body.querySelector(".badgeBtn").onclick=()=>google.script.run.withSuccessHandler(refreshDashboard).withFailureHandler(e=>alert(e.message)).awardBadge({familyCode:state.familyCode,pin:state.pin,profileId:d.profile.profileId,badge:body.querySelector(".badgeInput").value});
+ body.querySelector(".noteBtn").onclick=()=>google.script.run.withSuccessHandler(()=>msg(body.querySelector(".cardMsg"),"Note saved!")).withFailureHandler(e=>msg(body.querySelector(".cardMsg"),e.message,"err")).saveParentNote({familyCode:state.familyCode,pin:state.pin,profileId:d.profile.profileId,date:today(),note:body.querySelector(".noteInput").value});
+
+ wrap.append(header,body);
+ return wrap;
+}
+</script>
+</body>
+</html>
