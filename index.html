@@ -339,11 +339,35 @@ function renderStudent(){state.pointName=(state.currentData.pointSettings&&state
 function renderDailyPlan(){
  const p=state.currentData.dailyPlan||{},box=$("studentDailyPlan");
  const reviews=state.currentData.taskReviews||[];
+const workbooks = state.currentData.workbooks || [];
+
+function getWorkbookUrl(field) {
+  const workbookSubjects = {
+    math: "math",
+    science: "science",
+    socialStudies: "socialStudies"
+  };
+
+  const subject = workbookSubjects[field];
+  if (!subject) return "";
+
+  const workbook = workbooks.find(
+    w => String(w.subject || "") === subject
+  );
+
+  return workbook ? String(workbook.url || "").trim() : "";
+}
+
  box.innerHTML="";
  let any=false;
 
  PLAN_FIELDS.forEach(([field,urlField,title])=>{
-   const text=p[field]||"",url=p[urlField]||"";
+   const text = p[field] || "";
+let url = String(p[urlField] || "").trim();
+
+if (!url) {
+  url = getWorkbookUrl(field);
+}
    const points=Number(p[field+"Points"]||0);
    if(!text&&!url)return;
 
