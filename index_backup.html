@@ -73,11 +73,7 @@
   <h2>Enter the Cabin</h2>
   <div class="grid grid2">
     <div><label>Family code</label><input id="familyCode" placeholder="CABIN-FAMILY"></div>
-    <div><label class="remember-device">
-  <input type="checkbox" id="rememberFamily" checked>
-  Remember this device
-</label>
-
+    <div>
   <label>Doorway</label>
   <select id="role">
     <option value="student">Student</option>
@@ -327,18 +323,10 @@ function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMon
 const show=id=>$(id).classList.remove("hidden"),hide=id=>$(id).classList.add("hidden");
 function msg(el,text,type="ok"){el.innerHTML=`<div class="msg ${type}">${text}</div>`}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-// Restore remembered family code
-const savedFamily = localStorage.getItem("cca_familyCode");
-if (savedFamily) {
-    $("familyCode").value = savedFamily;
-}
+
 $("role").onchange=()=>$("pinWrap").classList.toggle("hidden",$("role").value!=="parent");
 $("loginBtn").onclick=()=>{
- state.familyCode=$("familyCode").value.trim();
-localStorage.setItem("cca_familyCode", state.familyCode);
-console.log("Saved:", state.familyCode);
-state.role=$("role").value;
-state.pin=$("parentPin").value;
+ state.familyCode=$("familyCode").value.trim();state.role=$("role").value;state.pin=$("parentPin").value;
  google.script.run.withSuccessHandler(res=>{state.profiles=res.profiles||[];state.pointName=(res.pointSettings&&res.pointSettings.displayName)||"Points";hide("loginView");state.role==="parent"?openParent():openProfiles()})
  .withFailureHandler(e=>msg($("loginMsg"),e.message,"err")).login({familyCode:state.familyCode,role:state.role,pin:state.pin});
 };
