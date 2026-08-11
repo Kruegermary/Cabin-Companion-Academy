@@ -63,6 +63,33 @@
     @media(max-width:700px){.planner-toolbar{grid-template-columns:1fr}}
     .footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     @media(max-width:650px){.child-summary strong{font-size:18px}}
+/* ==========================
+   WELCOME HOME
+========================== */
+
+.welcome-home{
+    text-align:center;
+    margin:18px 0 25px;
+    padding:18px;
+    background:#fff8ec;
+    border:2px solid #dcc8a2;
+    border-radius:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.welcome-home h3{
+    margin:0;
+    color:#805332;
+    font-size:30px;
+}
+
+.welcome-home p{
+    margin-top:12px;
+    font-size:18px;
+    color:#6a5035;
+    line-height:1.6;
+    font-style:italic;
+}    
   </style>
 </head>
 <body>
@@ -71,6 +98,16 @@
 
 <section id="loginView" class="panel">
   <h2>Enter the Cabin</h2>
+  <div class="welcome-home">
+
+    <h3 id="seasonGreeting">☀️ Summer at Beaver Lake</h3>
+
+    <p id="welcomeQuote">
+        Welcome home.<br>
+        Little Fluffers is waiting on the porch, and Bea has the coffee ready.
+    </p>
+
+</div>
   <div class="grid grid2">
     <div><label>Family code</label><input id="familyCode" placeholder="CABIN-FAMILY"></div>
     <div><label class="remember-device">
@@ -620,5 +657,6 @@ function parentCard(d){
  return wrap;
 }
 </script>
+<script src="js/welcome.js"></script>
 </body>
 </html>
