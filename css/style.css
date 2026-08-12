@@ -192,3 +192,13 @@ h2 {
     line-height:1.6;
     font-style:italic;
 }
+.welcome-home{
+    text-align:center;
+    margin:20px 0;
+}
+
+.welcome-character{
+    width:180px;
+    max-width:60%;
+    height:auto;
+}

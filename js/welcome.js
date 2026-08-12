@@ -13,7 +13,12 @@ function showWelcome() {
         <div class="season-title">
             ☀️ Summer at the Cabin
         </div>
+<div class="welcome-home">
 
+    <img src="images/characters/bea.png"
+         class="welcome-character">
+
+</div>
         <h2>Welcome Home, Mary!</h2>
 
         <p class="welcome-text">
@@ -37,19 +42,19 @@ function showWelcome() {
             </button>
 
             <button class="family-btn">
-                👧 Savannah
+                👧 Savanah
             </button>
 
             <button class="family-btn">
-                👦 Older Son
+                👦 Gavin
             </button>
 
             <button class="family-btn">
-                👦 Younger Son
+                👦 Isaak
             </button>
 
             <button class="family-btn">
-                👧 Youngest Daughter
+                👧 Desirae
             </button>
 
         </div>
