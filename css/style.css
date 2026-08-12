@@ -198,7 +198,7 @@ h2 {
 }
 
 .welcome-character{
-    width:220px;
+    width:180px; !important;
     max-width:90%;
     height:auto;
     display:block;
