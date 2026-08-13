@@ -35,7 +35,7 @@ function showWelcome() {
 
         </div>
 
-        <div class="family-buttons">
+    
 
            <div class="family-buttons">
 
