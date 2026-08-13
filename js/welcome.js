@@ -56,7 +56,9 @@ function showWelcome() {
         type="password"
         placeholder="Parent PIN (only for parents)">
 
-    <button id="enterBtn" class="enter-btn">
+    <button id="loginBtn" class="enter-btn">
+    🚪 Enter the Cabin
+</button>
         🚪 Enter the Cabin
     </button>
 
