@@ -37,25 +37,30 @@ function showWelcome() {
 
         <div class="family-buttons">
 
-            <button class="family-btn parentBtn">
-                👩 Parent
-            </button>
+           <div class="family-buttons">
 
-            <button class="family-btn">
-                👧 Savanah
-            </button>
+    <input
+        id="familyCode"
+        class="login-input"
+        placeholder="Family Code"
+        value="CABIN-FAMILY">
 
-            <button class="family-btn">
-                👦 Gavin
-            </button>
+    <select id="role" class="login-input">
+        <option value="student">Student</option>
+        <option value="parent">Parent</option>
+    </select>
 
-            <button class="family-btn">
-                👦 Isaak
-            </button>
+    <input
+        id="parentPin"
+        class="login-input"
+        type="password"
+        placeholder="Parent PIN (only for parents)">
 
-            <button class="family-btn">
-                👧 Desirae
-            </button>
+    <button id="enterBtn" class="enter-btn">
+        🚪 Enter the Cabin
+    </button>
+
+</div>
 
         </div>
 
