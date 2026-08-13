@@ -376,7 +376,7 @@ localStorage.setItem("cca_familyCode", state.familyCode);
 console.log("Saved:", state.familyCode);
 state.role=$("role").value;
 state.pin=$("parentPin").value;
- google.script.run.withSuccessHandler(res=>{state.profiles=res.profiles||[];state.pointName=(res.pointSettings&&res.pointSettings.displayName)||"Points";hide("loginView");state.role==="parent"?openParent():openProfiles()})
+ google.script.run.withSuccessHandler(res=>{ console.log("Profiles:", res.profiles);state.profiles=res.profiles||[];state.pointName=(res.pointSettings&&res.pointSettings.displayName)||"Points";hide("loginView");state.role==="parent"?openParent():openProfiles()})
  .withFailureHandler(e=>msg($("loginMsg"),e.message,"err")).login({familyCode:state.familyCode,role:state.role,pin:state.pin});
 };
 $("backLogin").onclick=reset;$("switchStudent").onclick=openProfiles;$("parentLogout").onclick=reset;
