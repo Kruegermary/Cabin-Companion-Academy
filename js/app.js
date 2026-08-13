@@ -1,26 +1,62 @@
-// Cabin Companion Academy 2.0
-// Main Application Controller
+const App={
 
-const App = {
+start(){
 
-    init() {
+    console.log("🏡 Cabin Companion Academy 2.0");
 
-        console.log("🏡 Cabin Companion Academy starting...");
+    this.showLogin();
 
-        this.load();
+},
 
-    },
+showLogin(){
 
-    load() {
+    html("loginView",`
 
-        console.log("✨ App Loaded");
+<div class="welcome">
 
-    }
+<h1>🏡 Cabin Companion Academy</h1>
+
+<h2>Summer at Beaver Lake</h2>
+
+<p>Welcome Home.</p>
+
+<input
+id="familyCode"
+placeholder="Family Code"
+value="CABIN-FAMILY">
+
+<br><br>
+
+<select id="role">
+
+<option value="student">
+Student
+</option>
+
+<option value="parent">
+Parent
+</option>
+
+</select>
+
+<br><br>
+
+<button id="loginButton">
+
+Enter the Cabin
+
+</button>
+
+</div>
+
+`);
+
+}
 
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-    App.init();
+App.start();
 
 });
