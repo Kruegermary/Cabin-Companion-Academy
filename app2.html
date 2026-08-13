@@ -1,39 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cabin Companion Academy</title>
+<title>Cabin Companion Academy 2.0</title>
 
-<link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/companions.css">
-<link rel="stylesheet" href="css/welcome.css">
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/companions.css">
+<link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/welcome.css">
+
+<style>
+
+body{
+    margin:0;
+    background:#eef8ef;
+    font-family:Arial,sans-serif;
+}
+
+header{
+    background:#8b5e3c;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+main{
+    max-width:1200px;
+    margin:auto;
+    padding:30px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+.hidden{
+    display:none;
+}
+
+button{
+    background:#6f9654;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:20px;
+}
+
+.profile-card{
+    background:#f6fbf2;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.profile-card:hover{
+    transform:translateY(-4px);
+}
+
+.avatar{
+    font-size:50px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div id="app">
+<header>
 
-    <div id="loginView"></div>
+<h1>🏡 Cabin Companion Academy</h1>
 
-    <div id="studentView" hidden></div>
+<p>Faith • Family • Learning • Adventure</p>
 
-    <div id="parentView" hidden></div>
+</header>
+
+<main>
+
+<section id="loginCard" class="card">
+
+<h2>Enter the Cabin</h2>
+
+<input
+id="familyCode"
+placeholder="Family Code"
+value="CABIN-FAMILY">
+
+<select id="role">
+
+<option value="student">Student</option>
+
+<option value="parent">Parent</option>
+
+</select>
+
+<input
+id="parentPin"
+placeholder="Parent PIN"
+type="password"
+class="hidden">
+
+<button id="loginBtn">
+
+Enter Cabin
+
+</button>
+
+</section>
+
+<section
+id="profilesCard"
+class="card hidden">
+
+<h2>Select Your Companion</h2>
+
+<div
+id="profiles"
+class="profile-grid">
 
 </div>
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/student.js"></script>
-<script src="js/parent.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/app.js"></script>
+</section>
+
+<section
+id="studentCard"
+class="card hidden">
+
+<h2 id="studentTitle">
+
+Loading...
+
+</h2>
+
+<div id="studentContent">
+
+</div>
+
+</section>
+
+<section
+id="parentCard"
+class="card hidden">
+
+<h2>Parent Dashboard</h2>
+
+<div id="parentContent">
+
+</div>
+
+</section>
+
+</main>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/student.js"></script>
+<script src="../js/parent.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/app.js"></script>
 
 </body>
 </html>

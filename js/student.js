@@ -1,0 +1,114 @@
+// Cabin Companion Academy
+// Student View
+
+const Student = {
+
+    currentProfile: null,
+    currentData: null,
+
+    load(profile) {
+
+        this.currentProfile = profile;
+
+        API.getStudent(
+            profile.profileId,
+            state.familyCode,
+
+            data => {
+
+                this.currentData = data;
+
+                document.getElementById("profilesCard").classList.add("hidden");
+                document.getElementById("studentCard").classList.remove("hidden");
+
+                document.getElementById("studentTitle").textContent =
+                    `${profile.avatar} ${profile.name}`;
+
+                this.render();
+
+            },
+
+            message => alert(message)
+
+        );
+
+    },
+
+    render() {
+
+        const container = document.getElementById("studentContent");
+
+        container.innerHTML = "";
+
+        const coins = document.createElement("div");
+        coins.className = "card";
+        coins.innerHTML = `<h3>⭐ Coins: ${this.currentData.coins || 0}</h3>`;
+        container.appendChild(coins);
+
+        const books = this.currentData.workbooks || [];
+
+        books.forEach(book => {
+
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+
+                <h3>${book.label}</h3>
+
+                <p>${book.subject}</p>
+
+                <input
+                    class="pageBox"
+                    value="${book.currentPage || ""}"
+                    placeholder="Current Page">
+
+                <br><br>
+
+                <button class="openBook">
+                    Open Workbook
+                </button>
+
+                <button class="savePage">
+                    Save Page
+                </button>
+
+            `;
+
+            card.querySelector(".openBook").onclick = () => {
+                window.open(book.url, "_blank");
+            };
+
+            card.querySelector(".savePage").onclick = () => {
+
+                const page =
+                    card.querySelector(".pageBox").value;
+
+                API.updateWorkbookPage(
+
+                    {
+                        familyCode: state.familyCode,
+                        profileId: this.currentProfile.profileId,
+                        subject: book.subject,
+                        currentPage: page
+                    },
+
+                    () => {
+                        alert("Workbook progress saved!");
+                    },
+
+                    message => {
+                        alert(message);
+                    }
+
+                );
+
+            };
+
+            container.appendChild(card);
+
+        });
+
+    }
+
+};
