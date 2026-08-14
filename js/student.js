@@ -72,7 +72,7 @@ const Student = {
                 <button class="savePage">
                     Save Page
                 </button>
-
+<div class="saveMessage"></div>
             `;
 
             card.querySelector(".openBook").onclick = () => {
