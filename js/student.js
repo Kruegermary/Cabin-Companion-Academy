@@ -93,9 +93,23 @@ const Student = {
                         currentPage: page
                     },
 
-                    () => {
-                        alert("Workbook progress saved!");
-                    },
+ () => {
+
+    const message =
+        card.querySelector(".saveMessage");
+
+    message.textContent = "✅ Progress Saved!";
+    message.style.color = "#2e7d32";
+    message.style.fontWeight = "bold";
+    message.style.marginTop = "10px";
+
+    setTimeout(() => {
+
+        message.textContent = "";
+
+    }, 2500);
+
+},                   
 
                     message => {
                         alert(message);
