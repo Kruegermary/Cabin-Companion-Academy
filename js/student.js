@@ -54,22 +54,40 @@ const Student = {
 
             card.innerHTML = `
 
-                <h3>${book.label}</h3>
+() => {
 
-                <p>${book.subject}</p>
+    const message =
+        card.querySelector(".saveMessage");
 
-                <input
-                    class="pageBox"
+    message.textContent = "✅ Progress Saved!";
+    message.style.color = "#2e7d32";
+    message.style.fontWeight = "bold";
+    message.style.marginTop = "10px";
+
+    setTimeout(() => {
+
+        message.textContent = "";
+
+    }, 2500);
+
+},
+
+<label style="font-weight:bold;">
+Current Page
+</label>
+
+<input
+    class="pageBox"
                     value="${book.currentPage || ""}"
                     placeholder="Current Page">
 
                 <br><br>
 
-                <button class="openBook">
+ <button class="openBook btn">               
                     Open Workbook
                 </button>
 
-                <button class="savePage">
+ <button class="savePage btn">              
                     Save Page
                 </button>
 <div class="saveMessage"></div>
