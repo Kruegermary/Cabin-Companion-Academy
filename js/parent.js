@@ -43,13 +43,35 @@ const Parent = {
                 const button =
                     document.createElement("button");
 
-                button.className = "btn";
+ button.className = "card";
 
-                button.style.margin = "8px";
+button.style.marginBottom = "18px";
+button.style.width = "100%";
+button.style.textAlign = "left";
 
-                button.textContent =
-                    `${profile.avatar} ${profile.name}`;
-                    
+const student =
+    this.data.find(d =>
+        d.profile.profileId === profile.profileId);
+
+button.innerHTML = `
+
+<h3>${profile.avatar} ${profile.name}</h3>
+
+<p>⭐ Coins:
+<strong>${student?.coins ?? 0}</strong></p>
+
+<p>🏅 Badges:
+<strong>${student?.badges?.length ?? 0}</strong></p>
+
+<p>📚 Workbooks:
+<strong>${student?.workbooks?.length ?? 0}</strong></p>
+
+<p style="margin-top:12px;color:#6f9654;">
+Click to manage →
+</p>
+
+`;
+
 button.onclick = () => {
 
     API.getStudent(
