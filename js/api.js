@@ -76,6 +76,16 @@ const API = {
         this.call("awardBadge", payload, success, failure);
 
     },
+    getParentDashboard(payload, success, failure) {
+
+    this.call(
+        "getParentDashboard",
+        payload,
+        success,
+        failure
+    );
+
+},
 updateWorkbookPage(payload, success, failure) {
 
     this.call(
