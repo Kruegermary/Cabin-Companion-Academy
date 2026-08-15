@@ -18,11 +18,33 @@ const Auth = {
                 state.pin = pin;
                 state.profiles = data.profiles || [];
 
-                if (role === "parent") {
-                    openParent();
-                } else {
-                    openProfiles();
-                }
+ if (role === "parent") {
+
+    API.getParentDashboard(
+
+        {
+            familyCode: state.familyCode,
+            pin: state.pin
+        },
+
+        data => {
+
+            document.getElementById("loginView").classList.add("hidden");
+            document.getElementById("parentView").classList.remove("hidden");
+
+            Parent.load(data);
+
+        },
+
+        alert
+
+    );
+
+} else {
+
+    openProfiles();
+
+}
 
             },
 

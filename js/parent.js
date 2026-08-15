@@ -49,16 +49,31 @@ const Parent = {
 
                 button.textContent =
                     `${profile.avatar} ${profile.name}`;
+                    
+button.onclick = () => {
 
-                button.onclick = () => {
+    API.getStudent(
 
-                    alert(
-                        "Opening " +
-                        profile.name +
-                        "'s bookshelf..."
-                    );
+        profile.profileId,
+        state.familyCode,
 
-                };
+        data => {
+
+            state.currentProfile = profile;
+            state.currentData = data;
+
+            document.getElementById("parentView").classList.add("hidden");
+            document.getElementById("studentView").classList.remove("hidden");
+
+            Student.render(data);
+
+        },
+
+        alert
+
+    );
+
+};
 
                 list.appendChild(button);
 
